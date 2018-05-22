@@ -1,5 +1,5 @@
-## tentacle-client-win TentacleÔ¶³Ì×ÀÃæwindows°æ±¾ÊµÏÖ
-java°æ¼°·şÎñÆ÷¶ËÊµÏÖ£¬Çë²Î¼ûhttps://gitee.com/matrixy/tentacle
+## tentacle-client-win Tentacleè¿œç¨‹æ¡Œé¢windowsç‰ˆæœ¬å®ç°
+javaç‰ˆåŠæœåŠ¡å™¨ç«¯å®ç°ï¼Œè¯·å‚è§https://gitee.com/matrixy/tentacle
 
-¶à¿÷µ±Äê¾ŞÓ²³­µÃºÃ£¬java´úÂë¸´ÖÆ¹ıÀ´£¬ÖÁÉÙÓĞ°Ë³ÉÊÇ²»ÓÃ¸ÄµÄ£¬¿ªĞÄ¡£
+å¤šäºå½“å¹´å·¨ç¡¬æŠ„å¾—å¥½ï¼Œjavaä»£ç å¤åˆ¶è¿‡æ¥ï¼Œè‡³å°‘æœ‰å…«æˆæ˜¯ä¸ç”¨æ”¹çš„ï¼Œå¼€å¿ƒã€‚
 

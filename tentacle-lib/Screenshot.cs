@@ -1,8 +1,6 @@
 ﻿
 using System;
 using System.IO;
-using System.Drawing;
-using System.Drawing.Imaging;
 
 using cn.org.hentai.tentacle.util;
 
@@ -33,16 +31,12 @@ namespace cn.org.hentai.tentacle.graphic
             this.compressedData = compressedData;
         }
 
-        public Screenshot(Bitmap img)
+        public Screenshot(int[] bitmap, int width, int height)
         {
             this.captureTime = TimeUtil.Now();
-            this.width = img.Width;
-            this.height = img.Height;
-            this.bitmap = new int[img.Width * img.Height];
-            using (MemoryStream stream = new MemoryStream())
-            {
-                // img.Save(stream, ImageFormat.MemoryBmp);
-            }
+            this.width = width;
+            this.height = height;
+            this.bitmap = new int[width * height];
         }
 
         // 截屏是否己过期，超过1秒的不需要再发送了
