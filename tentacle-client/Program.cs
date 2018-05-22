@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ServiceProcess;
 using System.Text;
 
-namespace tentacle_client
+namespace cn.org.hentai.tentacle.service
 {
     static class Program
     {
@@ -15,7 +15,7 @@ namespace tentacle_client
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new Service1()
+                new TentacleService()
             };
             ServiceBase.Run(ServicesToRun);
         }

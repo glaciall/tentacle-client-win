@@ -6,11 +6,11 @@ using System.Diagnostics;
 using System.ServiceProcess;
 using System.Text;
 
-namespace tentacle_client
+namespace cn.org.hentai.tentacle.service
 {
-    public partial class Service1 : ServiceBase
+    public partial class TentacleService : ServiceBase
     {
-        public Service1()
+        public TentacleService()
         {
             InitializeComponent();
         }
