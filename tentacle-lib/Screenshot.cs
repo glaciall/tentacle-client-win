@@ -40,7 +40,7 @@ namespace cn.org.hentai.tentacle.graphic
         }
 
         // 截屏是否己过期，超过1秒的不需要再发送了
-        public bool IsExpired()
+        public bool isExpired()
         {
             return TimeUtil.Now() - this.captureTime > 1000;
         }
