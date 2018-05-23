@@ -9,11 +9,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tentacle-win", "tentacle-wi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B0C15319-AA53-413A-8DA0-84CA5DDD489C}"
 	ProjectSection(SolutionItems) = preProject
+		..\..\..\Downloads\DfMirageSDK.doc = ..\..\..\Downloads\DfMirageSDK.doc
 		LICENSE.txt = LICENSE.txt
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tentacle-lib", "tentacle-lib\tentacle-lib.csproj", "{A7B35804-B33C-425F-8789-AF871109F9DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tentacle-lib", "tentacle-lib\tentacle-lib.csproj", "{A7B35804-B33C-425F-8789-AF871109F9DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
