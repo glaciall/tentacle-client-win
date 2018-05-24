@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
 
 namespace cn.org.hentai.tentacle.system
 {
@@ -80,6 +77,7 @@ namespace cn.org.hentai.tentacle.system
             return null;
         }
 
+        /*
         /// <summary>
         /// 获取屏幕分辨率
         /// </summary>
@@ -88,6 +86,7 @@ namespace cn.org.hentai.tentacle.system
         {
             return new Rectangle(0, 0, 0, 0);
         }
+        */
 
         /// <summary>
         /// TODO: 初始化

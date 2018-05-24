@@ -113,7 +113,7 @@ namespace cn.org.hentai.tentacle.compress
         {
             // 重置
             colorIndex = 0;
-            Array.Fill(mainColors, 0);
+            Array.Clear(mainColors, 0, mainColors.Length);
 
             // 颜色计数
             for (int i = from; i < to; i++)

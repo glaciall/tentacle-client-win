@@ -10,7 +10,7 @@ namespace cn.org.hentai.tentacle.util
     {
         public static byte[] parse(String hexString)
         {
-            String[] hexes = hexString.Split(" ");
+            String[] hexes = hexString.Split(' ');
             byte[] data = new byte[hexes.Length];
             for (int i = 0; i < hexes.Length; i++) data[i] = (byte)(Convert.ToByte(hexes[i], 16) & 0xff);
             return data;

@@ -82,7 +82,6 @@ namespace MirrSharp.Driver
 
 		private string driverInstanceName = "";
 		private IntPtr _getChangesBuffer = IntPtr.Zero;
-		private Thread _pollingThread = null;
 
 		private static void SafeChangeDisplaySettingsEx(string lpszDeviceName, ref DeviceMode mode, IntPtr hwnd, uint dwflags, IntPtr lParam)
 		{
@@ -169,7 +168,7 @@ namespace MirrSharp.Driver
             State = MirrorState.Running;
 		}
 
-		public void Unload()
+		public void Release()
 		{
             unmapSharedBuffers();
 
@@ -211,7 +210,7 @@ namespace MirrSharp.Driver
 			_globalDC = CreateDC(driverInstanceName, null, null, IntPtr.Zero);
 			if (_globalDC == IntPtr.Zero)
 			{
-				throw new Win32Exception(Marshal.GetLastWin32Error());
+				throw new Win32Exception("Code: " + Marshal.GetLastWin32Error() + ", Drvier: " + driverInstanceName);
 			}
 
 			if (_getChangesBuffer != IntPtr.Zero)
@@ -272,7 +271,7 @@ namespace MirrSharp.Driver
 		public void Dispose()
 		{
 			if (State == MirrorState.Running)
-				Unload();
+				Release();
 		}
 	}
 }
