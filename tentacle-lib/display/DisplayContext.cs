@@ -71,6 +71,7 @@ namespace cn.org.hentai.tentacle.display
             }
 
             bmp.UnlockBits(bmpData);
+            bmp.Dispose();
             // free up the Bitmap object
             GDI32.DeleteObject(hBitmap);
             return null;
