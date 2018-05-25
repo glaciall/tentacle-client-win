@@ -2,6 +2,9 @@
 using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
+using cn.org.hentai.tentacle.graphic;
+
 namespace cn.org.hentai.tentacle.display
 {
     /// <summary>
@@ -9,15 +12,18 @@ namespace cn.org.hentai.tentacle.display
     /// </summary>
     public class DisplayContext
     {
-        private UInt32[] screenBitmap = new UInt32[4096 * 2160];
+        private static UInt32[] screenBitmap = new UInt32[4096 * 2160];
+        private static int width;
+        private static int height;
 
         /// <summary>
         /// Creates an Image object containing a screen shot of the entire desktop
         /// </summary>
         /// <returns></returns>
-        public Image CaptureScreen()
+        public unsafe static Screenshot CaptureScreen()
         {
-            return CaptureWindow(User32.GetDesktopWindow());
+            CaptureWindow(User32.GetDesktopWindow());
+            return new Screenshot(screenBitmap, width, height);
         }
 
         /// <summary>
@@ -25,15 +31,16 @@ namespace cn.org.hentai.tentacle.display
         /// </summary>
         /// <param name="handle">The handle to the window. (In windows forms, this is obtained by the Handle property)</param>
         /// <returns></returns>
-        public Image CaptureWindow(IntPtr handle)
+        private static void CaptureWindow(IntPtr handle)
         {
+            // memoryStream.Position = 0;
             // get te hDC of the target window
             IntPtr hdcSrc = User32.GetWindowDC(handle);
             // get the size
             User32.RECT windowRect = new User32.RECT();
             User32.GetWindowRect(handle, ref windowRect);
-            int width = windowRect.right - windowRect.left;
-            int height = windowRect.bottom - windowRect.top;
+            width = windowRect.right - windowRect.left;
+            height = windowRect.bottom - windowRect.top;
             // create a device context we can copy to
             IntPtr hdcDest = GDI32.CreateCompatibleDC(hdcSrc);
             // create a bitmap we can copy it to,
@@ -52,7 +59,7 @@ namespace cn.org.hentai.tentacle.display
             Bitmap bmp = Bitmap.FromHbitmap(hBitmap);
             Rectangle rect = new Rectangle(0, 0, width, height);
             BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadOnly, bmp.PixelFormat);
-            
+
             unsafe
             {
                 byte* p = (byte*)bmpData.Scan0.ToPointer();
@@ -60,21 +67,20 @@ namespace cn.org.hentai.tentacle.display
                 {
                     for (int x = 0; x < width; x++)
                     {
-                        byte r = p[0];
+                        byte r = p[2];
                         byte g = p[1];
-                        byte b = p[2];
-                        p += 3;
+                        byte b = p[0];
+                        p += 4;
                         screenBitmap[k++] = (UInt32)(((r << 16) | (g << 8) | b) | 0xff000000);
                     }
-                    p += bmpData.Stride - width * 3;
+                    p += bmpData.Stride - width * 4;
                 }
             }
 
+            // free up the Bitmap object
             bmp.UnlockBits(bmpData);
             bmp.Dispose();
-            // free up the Bitmap object
             GDI32.DeleteObject(hBitmap);
-            return null;
         }
 
         /// <summary>

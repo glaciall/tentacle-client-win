@@ -18,7 +18,7 @@ namespace cn.org.hentai.tentacle.graphic
         public int height;
 
         // RGB
-        public int[] bitmap;
+        public UInt32[] bitmap;
 
         // 压缩后的图像数据
         public byte[] compressedData;
@@ -31,12 +31,12 @@ namespace cn.org.hentai.tentacle.graphic
             this.compressedData = compressedData;
         }
 
-        public Screenshot(int[] bitmap, int width, int height)
+        public unsafe Screenshot(UInt32[] bitmap, int width, int height)
         {
             this.captureTime = TimeUtil.Now();
             this.width = width;
             this.height = height;
-            this.bitmap = new int[width * height];
+            this.bitmap = bitmap;
         }
 
         // 截屏是否己过期，超过1秒的不需要再发送了

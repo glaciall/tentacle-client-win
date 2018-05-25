@@ -27,15 +27,7 @@ namespace cn.org.hentai.tentacle.win
 
         private void test()
         {
-            DisplayContext screen = new DisplayContext();
-            for (int i = 0; i < 100; i++)
-            {
-                long time = DateTime.Now.Ticks;
-                screen.CaptureScreen();
-                time = DateTime.Now.Ticks - time;
-                Console.WriteLine("Spend: " + (time / 1000));
-                Thread.Sleep(100);
-            }
+            
         }
     }
 }
