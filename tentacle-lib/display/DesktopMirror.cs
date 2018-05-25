@@ -261,7 +261,9 @@ namespace MirrSharp.Driver
                 screenBitmap[i] = (a << 24) | (r << 16) | (g << 8) | b;
             }
             gc.Free();
-            return new Screenshot(screenBitmap, screenWidth, screenHeight);
+            // TODO: 需要重载
+            return null;
+            // return new Screenshot(screenBitmap, screenWidth, screenHeight);
         }
 
 		/// <summary>

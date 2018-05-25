@@ -1,6 +1,7 @@
 ﻿using cn.org.hentai.tentacle.util;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,33 @@ namespace cn.org.hentai.tentacle.protocol
         private Packet()
         {
             // do nothing here..
+        }
+
+        public static Packet read(Stream stream, int bytesInBuffer)
+        {
+            if (bytesInBuffer < 11) return null;
+            byte[] head = new byte[11];
+            int len = stream.Read(head, 0, 11);
+            int dataLength = ByteUtil.getInt(head, 7, 4) & 0x7fffff;
+            using (MemoryStream ms = new MemoryStream(dataLength + 10))
+            {
+                byte[] buff = new byte[512];
+                for (int i = 0; i < dataLength; i += len)
+                {
+                    len = stream.Read(buff, 0, Math.Min(512, dataLength - i));
+                    if (len == -1) break;
+                    ms.Write(buff, 0, len);
+                }
+                Packet p = new Packet();
+                p.data = new byte[dataLength + 6 + 1 + 4];
+                p.size = 0;
+                p.maxSize = p.size;
+                p.addBytes(head);
+                p.addBytes(ms.ToArray());
+                buff = null;
+                head = null;
+                return p;
+            }
         }
 
         /**
@@ -40,6 +68,11 @@ namespace cn.org.hentai.tentacle.protocol
             p.size = 11;
             p.maxSize = length;
             return p;
+        }
+
+        public int getSize()
+        {
+            return this.size;
         }
 
         public Packet addByte(byte b)
