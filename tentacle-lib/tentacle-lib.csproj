@@ -57,10 +57,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="protocol\Command.cs" />
     <Compile Include="protocol\Packet.cs" />
+    <Compile Include="system\ClipboardAsync.cs" />
     <Compile Include="system\File.cs" />
     <Compile Include="system\FileSystem.cs" />
     <Compile Include="system\LocalComputer.cs" />
     <Compile Include="system\Robot.cs" />
+    <Compile Include="util\BlockingQueue.cs" />
     <Compile Include="util\ByteUtil.cs" />
     <Compile Include="util\Configs.cs" />
     <Compile Include="util\TimeUtil.cs" />

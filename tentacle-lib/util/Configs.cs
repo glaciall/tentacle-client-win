@@ -15,23 +15,22 @@ namespace cn.org.hentai.tentacle.util
         private const string section = "tentacle";
         private static string configFilePath;
 
-        public static void init(String filePath)
+        public static void init(string filePath)
         {
             configFilePath = filePath;
         }
 
-        public static String get(String key)
+        public static string get(string key, string defaultVal)
         {
             StringBuilder temp = new StringBuilder(255);
-            int i = GetPrivateProfileString(section, key, "", temp, 255, configFilePath);
+            int i = GetPrivateProfileString(section, key, defaultVal, temp, 255, configFilePath);
             return temp.ToString();
         }
 
-        public static int getInt(String key, int defaultVal)
+        public static int getInt(string key, int defaultVal)
         {
-            String val = get(key);
-            if (null == val) return defaultVal;
-            else return Convert.ToInt32(val);
+            string val = get(key, Convert.ToString(defaultVal));
+            return Convert.ToInt32(val);
         }
     }
 }

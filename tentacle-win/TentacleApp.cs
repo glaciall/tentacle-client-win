@@ -10,6 +10,8 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Windows.Forms;
+using tentacle_lib.system;
 
 namespace cn.org.hentai.tentacle.app
 {
@@ -26,7 +28,7 @@ namespace cn.org.hentai.tentacle.app
         public void start()
         {
             // 加载配置文件
-            Configs.init("config.ini");
+            Configs.init(System.IO.Directory.GetCurrentDirectory() + "\\" + "config.ini");
 
             // 键盘映射初始化
             KeyMapping.init();
@@ -40,6 +42,7 @@ namespace cn.org.hentai.tentacle.app
 
         private void connectionDaemon()
         {
+            Thread.CurrentThread.Name = "tentacle-session-daemon";
             while (true)
             {
                 if (DateTime.Now.Ticks - lastActiveTime > 1000 * 1000 * 60 * 5)
@@ -65,8 +68,10 @@ namespace cn.org.hentai.tentacle.app
 
         private void converse()
         {
+            Thread.CurrentThread.Name = "tentacle-server-converse";
+
             working = false;
-            conn = new TcpClient(Configs.get("server.addr"), Configs.getInt("server.port", 1986));
+            conn = new TcpClient(Configs.get("server.addr", "localhost"), Configs.getInt("server.port", 1986));
             conn.ReceiveTimeout = 30000;
             conn.SendBufferSize = 30000;
             stream = conn.GetStream();
@@ -77,7 +82,7 @@ namespace cn.org.hentai.tentacle.app
             // TODO 1. 身份验证
             while (true)
             {
-                if (DateTime.Now.Ticks - lastActiveTime > 30000) break;
+                if (DateTime.Now.Ticks - lastActiveTime > 300000000) break;
                 // 有无下发下来的数据包
                 Packet packet = Packet.read(stream, conn.Available);
                 if (packet != null)
@@ -89,13 +94,13 @@ namespace cn.org.hentai.tentacle.app
                 // TODO: 发送截图
 
                 // 如果闲置超过20秒，则发送一个心跳包
-                if (DateTime.Now.Ticks - lastActiveTime > 20000000)
+                if (DateTime.Now.Ticks - lastActiveTime > 200000000)
                 {
                     Packet p = Packet.create(Command.HEARTBEAT, 5);
                     p.addBytes(Encoding.ASCII.GetBytes("HELLO"));
-                    stream.Write(p.getBytes(), 0, p.getSize());
-                    stream.Flush();
+                    send(p);
                     lastActiveTime = DateTime.Now.Ticks;
+                    Console.WriteLine("hello from client...");
                 }
                 Thread.Sleep(5);
             }
@@ -107,6 +112,9 @@ namespace cn.org.hentai.tentacle.app
             int cmd = packet.nextByte();
             int length = packet.nextInt();
             Packet resp = null;
+
+            Console.WriteLine("Recv Cmd: " + cmd);
+
             // 心跳
             if (cmd == Command.HEARTBEAT)
             {
@@ -140,30 +148,20 @@ namespace cn.org.hentai.tentacle.app
             // 获取剪切板内容
             else if (cmd == Command.GET_CLIPBOARD)
             {
-                /*
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                Transferable content = clipboard.getContents(null);
-                if (content.isDataFlavorSupported(DataFlavor.stringFlavor))
+                string text = ClipboardAsync.GetText();
+                if (text != null && text.Length > 0)
                 {
-                    String text = (String)clipboard.getData(DataFlavor.stringFlavor);
-                    // 剪切板没有内容就别回应了
-                    byte[] bytes = text.getBytes("UTF-8");
-                    if (text != null && text.length() > 0)
-                        resp = Packet.create(Command.GET_CLIPBOARD_RESPONSE, 4 + bytes.length).addInt(bytes.length).addBytes(bytes);
+                    byte[] bytes = Encoding.UTF8.GetBytes(text);
+                    resp = Packet.create(Command.GET_CLIPBOARD_RESPONSE, 4 + bytes.Length).addInt(bytes.Length).addBytes(bytes);
                 }
-                */
             }
             // 设置剪切板内容
             else if (cmd == Command.SET_CLIPBOARD)
             {
-                /*
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 int len = packet.nextInt();
-                String text = new String(packet.nextBytes(len), "UTF-8");
-                StringSelection selection = new StringSelection(text);
-                clipboard.setContents(selection, null);
-                resp = Packet.create(Command.SET_CLIPBOARD_RESPONSE, 4).addBytes("OJBK".getBytes());
-                */
+                String text = Encoding.UTF8.GetString(packet.nextBytes(len));
+                ClipboardAsync.SetText(text);
+                resp = Packet.create(Command.SET_CLIPBOARD_RESPONSE, 4).addBytes(Encoding.UTF8.GetBytes("OJBK"));
             }
             // 键鼠事件处理
             else if (cmd == Command.HID_COMMAND)
@@ -201,7 +199,16 @@ namespace cn.org.hentai.tentacle.app
             {
                 int len = packet.nextInt();
                 String path = Encoding.UTF8.GetString(packet.nextBytes(len));
-                cn.org.hentai.tentacle.system.File[] files = FileSystem.list(path);
+                cn.org.hentai.tentacle.system.File[] files = null;
+                try
+                {
+                    files = FileSystem.list(path);
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    return;
+                }
                 using (MemoryStream baos = new MemoryStream(40960))
                 {
                     for (int i = 0; files != null && i < files.Length; i++)
@@ -212,7 +219,7 @@ namespace cn.org.hentai.tentacle.app
                         // if ("".Equals(name)) name = file.getAbsolutePath();
                         byte[] fbytes = Encoding.UTF8.GetBytes(name);
                         baos.WriteByte((byte)(file.isDirectory ? 1 : 0));
-                        baos.Write(ByteUtil.toBytes(file.length), 0, 4);
+                        baos.Write(ByteUtil.toBytes(file.length), 0, 8);
                         baos.Write(ByteUtil.toBytes(file.lastModifiedTime), 0, 8);
                         baos.Write(ByteUtil.toBytes(fbytes.Length), 0, 4);
                         baos.Write(fbytes, 0, fbytes.Length);
@@ -241,6 +248,9 @@ namespace cn.org.hentai.tentacle.app
 
         public void send(Packet packet)
         {
+            Console.WriteLine("Send: ");
+            ByteUtil.dump(packet.getBytes());
+            Console.WriteLine("---------------------------------------------------------------------------");
             stream.Write(packet.getBytes(), 0, packet.getSize());
             stream.Flush();
         }

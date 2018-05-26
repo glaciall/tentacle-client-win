@@ -12,6 +12,7 @@ using cn.org.hentai.tentacle.display;
 using System.Drawing.Imaging;
 using System.Net.Sockets;
 using System.IO;
+using cn.org.hentai.tentacle.app;
 
 namespace cn.org.hentai.tentacle.win
 {
@@ -34,7 +35,7 @@ namespace cn.org.hentai.tentacle.win
 
         private void Tentacle_Load(object sender, EventArgs e)
         {
-
+            new TentacleApp().start();
         }
     }
 }
