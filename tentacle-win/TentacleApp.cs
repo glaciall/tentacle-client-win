@@ -132,8 +132,8 @@ namespace cn.org.hentai.tentacle.app
                 int colorBits = packet.nextByte() & 0xff;
                 // TODO: 获取屏幕当前分辨率
                 // Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-                short screenWidth = 1920;
-                short screenHeight = 1080;
+                short screenWidth = (short)Screen.PrimaryScreen.Bounds.Width;
+                short screenHeight = (short)Screen.PrimaryScreen.Bounds.Height;
                 resp = Packet.create(Command.CONTROL_RESPONSE, 15)
                         .addByte((byte)0x01)                            // 压缩方式
                         .addByte((byte)0x00)                            // 带宽
