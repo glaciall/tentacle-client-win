@@ -90,5 +90,8 @@
   <ItemGroup>
     <Folder Include="app\" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\tentacle.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

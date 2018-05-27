@@ -99,7 +99,6 @@ namespace cn.org.hentai.tentacle.app
                     p.addBytes(Encoding.ASCII.GetBytes("HELLO"));
                     send(p);
                     lastActiveTime = DateTime.Now.Ticks;
-                    Console.WriteLine("hello from client...");
                 }
                 Thread.Sleep(5);
             }
@@ -247,9 +246,6 @@ namespace cn.org.hentai.tentacle.app
 
         public void send(Packet packet)
         {
-            Console.WriteLine("Send: ");
-            ByteUtil.dump(packet.getBytes());
-            Console.WriteLine("---------------------------------------------------------------------------");
             stream.Write(packet.getBytes(), 0, packet.getSize());
             stream.Flush();
         }
