@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace tentacle_lib.system
+namespace cn.org.hentai.tentacle.system
 {
     public class ClipboardAsync
     {

@@ -11,7 +11,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using tentacle_lib.system;
 
 namespace cn.org.hentai.tentacle.app
 {
