@@ -70,7 +70,7 @@ namespace cn.org.hentai.tentacle.app
             Thread.CurrentThread.Name = "tentacle-server-converse";
 
             working = false;
-            conn = new TcpClient(Configs.get("server.addr", "localhost"), Configs.getInt("server.port", 1986));
+            conn = new TcpClient(Configs.get("server", "localhost"), Configs.getInt("port", 1986));
             conn.ReceiveTimeout = 30000;
             conn.SendBufferSize = 30000;
             stream = conn.GetStream();
