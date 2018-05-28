@@ -14,7 +14,7 @@ namespace cn.org.hentai.tentacle.compress
         /// <param name="from">图像数据的开始序号</param>
         /// <param name="to">图像数据的结束序号</param>
         /// <returns>压缩后的字节数组</returns>
-        public static byte[] process(String method, int[] argbArray, int from, int to)
+        public static byte[] process(String method, UInt32[] argbArray, int from, int to)
         {
             return new RLEncoding().compress(argbArray, from, to);
         }

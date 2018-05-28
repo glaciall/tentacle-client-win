@@ -11,23 +11,23 @@ namespace cn.org.hentai.tentacle.compress
         private static MemoryStream compressedData = new MemoryStream(1024 * 1024 * 2);
 
         // 以RGB作为数组下标的数组容器，用于保存颜色的出现次数，或是颜色表的下标
-        private static int[] colortable = new int[1 << 24];
+        private static UInt32[] colortable = new UInt32[1 << 24];
 
         // 保存己出现的颜色，假设同屏最多出现1920 * 1080种不同的颜色
-        private static int[] colors = new int[1920 * 1080];
+        private static UInt32[] colors = new UInt32[1920 * 1080];
 
         // 最少需要N次出现才会加入到颜色表中
         private static int N = 20;
 
         // 最多保存256个出现最多次的颜色
-        private static int[] mainColors = new int[510];
+        private static UInt32[] mainColors = new UInt32[510];
 
         // mainColors数组的有效数据下标，也指代了颜色个数
         private static int colorIndex = 0;
 
         private int colorBitMask = 0xffffff;
 
-        public byte[] compress(int[] bitmap, int from, int to)
+        public byte[] compress(UInt32[] bitmap, int from, int to)
         {
             // 初始化
             compressedData.Position = 0;
@@ -39,7 +39,7 @@ namespace cn.org.hentai.tentacle.compress
             compressedData.WriteByte((byte)((colorIndex - 1) & 0xff));
             for (int i = 0; i < colorIndex - 1; i++)
             {
-                int rgb = mainColors[i * 2 + 1] & 0xffffff;
+                UInt32 rgb = mainColors[i * 2 + 1] & 0xffffff;
                 compressedData.WriteByte((byte)((rgb >> 16) & 0xff));
                 compressedData.WriteByte((byte)((rgb >> 8) & 0xff));
                 compressedData.WriteByte((byte)(rgb & 0xff));
@@ -47,7 +47,7 @@ namespace cn.org.hentai.tentacle.compress
 
             // 行程编码
             int rl = 1;
-            int color, lastColor = bitmap[0] & 0xffffff;
+            UInt32 color, lastColor = bitmap[0] & 0xffffff;
             for (int i = 1, l = to; i < to; i++)
             {
                 color = bitmap[i];
@@ -109,7 +109,7 @@ namespace cn.org.hentai.tentacle.compress
         }
 
         // 查找次数出现最多的颜色
-        public static void findMainColors(int[] bitmap, int from, int to)
+        public static void findMainColors(UInt32[] bitmap, int from, int to)
         {
             // 重置
             colorIndex = 0;
@@ -118,18 +118,18 @@ namespace cn.org.hentai.tentacle.compress
             // 颜色计数
             for (int i = from; i < to; i++)
             {
-                int color = detract(bitmap[i] & 0xffffff);
+                UInt32 color = detract(bitmap[i] & 0xffffff);
                 if (bitmap[i] == 0) continue;
                 if (colortable[color] == 0) colors[colorIndex++] = color;
                 colortable[color] += 1;
             }
 
             // 查找主颜色
-            int minCount = 0;
+            UInt32 minCount = 0;
             for (int i = 0; i < colorIndex; i++)
             {
-                int color = colors[i];
-                int count = colortable[color];
+                UInt32 color = colors[i];
+                UInt32 count = colortable[color];
 
                 // 将colorCounting清零
                 colortable[color] = 0;
@@ -157,14 +157,14 @@ namespace cn.org.hentai.tentacle.compress
             colorIndex = 1;
             for (int i = 0; i < mainColors.Length; i += 2)
             {
-                int count = mainColors[i];
+                UInt32 count = mainColors[i];
                 if (count == 0) continue;
-                colortable[mainColors[i + 1]] = colorIndex++;
+                colortable[mainColors[i + 1]] = (UInt32)colorIndex++;
             }
         }
 
         // 针对颜色值进行减位，用于压缩处理
-        static int detract(int c)
+        static UInt32 detract(UInt32 c)
         {
             // 灰色RGB不减位
             if ((((c >> 16) & 0xff) ^ ((c >> 8) & 0xff)) == (c & 0xff)) return c;

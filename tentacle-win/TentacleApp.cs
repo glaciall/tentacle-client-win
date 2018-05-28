@@ -1,4 +1,6 @@
 ﻿using cn.org.hentai.tentacle.compress;
+using cn.org.hentai.tentacle.display;
+using cn.org.hentai.tentacle.graphic;
 using cn.org.hentai.tentacle.hid;
 using cn.org.hentai.tentacle.protocol;
 using cn.org.hentai.tentacle.system;
@@ -11,6 +13,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using tentacle_lib.util;
 
 namespace cn.org.hentai.tentacle.app
 {
@@ -62,8 +65,11 @@ namespace cn.org.hentai.tentacle.app
         }
 
         bool working = false;
+        Object messenger = new Object();
         TcpClient conn;
         Stream stream;
+        LinkedList<Screenshot> screenshots = new LinkedList<Screenshot>();
+        LinkedList<Packet> compressedScreenshots = new LinkedList<Packet>();
 
         private void converse()
         {
@@ -142,6 +148,9 @@ namespace cn.org.hentai.tentacle.app
                 // (captureWorker = new CaptureWorker()).start();
                 // (compressWorker = new CompressWorker()).start();
                 // (hidCommandExecutor = new HIDCommandExecutor()).start();
+
+                new Thread(captureScreen).Start();
+                new Thread(compress).Start();
             }
             // 获取剪切板内容
             else if (cmd == Command.GET_CLIPBOARD)
@@ -244,10 +253,111 @@ namespace cn.org.hentai.tentacle.app
             }
         }
 
+        // 截屏工作线程
+        private void captureScreen()
+        {
+            while (working)
+            {
+                Screenshot screenshot = DisplayContext.CaptureScreen();
+                lock(screenshots)
+                {
+                    screenshots.AddLast(screenshot);
+                }
+                Thread.Sleep(50);
+            }
+        }
+
+        // 压缩处理工作线程
+        private void compress()
+        {
+            int sequence = 0;
+            Screenshot lastScreen = null;
+
+            while (working)
+            {
+                Screenshot screenshot = null;
+                while (true)
+                {
+                    if (screenshots.Count == 0) break;
+                    lock(screenshots)
+                    {
+                        screenshot = screenshots.First();
+                        screenshots.RemoveFirst();
+                    }
+                }
+                if (screenshot == null || screenshot.isExpired()) return;
+
+                // 分辨率是否发生了变化？
+                if (lastScreen != null && (lastScreen.width != screenshot.width || lastScreen.height != screenshot.height)) lastScreen = null;
+
+                // 1. 求差
+                UInt32[] bitmap = new UInt32[screenshot.bitmap.Length];
+                int changedColors = 0, start = -1, end = bitmap.Length;
+                if (lastScreen != null)
+                {
+                    for (int i = 0; i < bitmap.Length; i++)
+                    {
+                        if (lastScreen.bitmap[i] == screenshot.bitmap[i])
+                        {
+                            bitmap[i] = 0;
+                        }
+                        else
+                        {
+                            if (start == -1) start = i;
+                            else end = i;
+                            changedColors += 1;
+                            bitmap[i] = screenshot.bitmap[i];
+                        }
+                    }
+                }
+                else bitmap = screenshot.bitmap;
+
+                if (lastScreen != null && changedColors == 0) return;
+                // Log.debug("Changed colors: " + changedColors);
+
+                // 2. 压缩
+                start = Math.Max(start, 0);
+                start = 0;
+                end = bitmap.Length;
+                byte[] compressedData = CompressUtil.process("rle", bitmap, start, end);
+
+                // Log.debug("Compress Ratio: " + (screenshot.bitmap.length * 4.0f / compressedData.length));
+                // Log.debug("After: " + (compressedData.length / 1024));
+
+                // 3. 入队列
+                Packet packet = Packet.create(Command.SCREENSHOT, compressedData.Length + 16);
+                packet.addShort((short)screenshot.width)
+                        .addShort((short)screenshot.height)
+                        .addLong(screenshot.captureTime)
+                        .addInt(sequence++);
+                packet.addBytes(compressedData);
+
+                /*
+                lock(compressedScreenshots)
+                {
+                    compressedScreenshots.AddLast(packet);
+                }
+                */
+                send(packet);
+
+                lastScreen = screenshot;
+                Thread.Sleep(20);
+            }
+        }
+
+        // 文件传输工作线程
+
+
+        // HID指令执行线程
+
+
         public void send(Packet packet)
         {
-            stream.Write(packet.getBytes(), 0, packet.getSize());
-            stream.Flush();
+            lock(messenger)
+            {
+                stream.Write(packet.getBytes(), 0, packet.getSize());
+                stream.Flush();
+            }
         }
-}
+    }
 }
