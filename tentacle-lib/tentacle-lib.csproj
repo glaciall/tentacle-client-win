@@ -63,6 +63,7 @@
     <Compile Include="system\LocalComputer.cs" />
     <Compile Include="system\Robot.cs" />
     <Compile Include="util\BlockingQueue.cs" />
+    <Compile Include="util\ByteWriter.cs" />
     <Compile Include="util\ByteUtil.cs" />
     <Compile Include="util\Configs.cs" />
     <Compile Include="util\TimeUtil.cs" />
