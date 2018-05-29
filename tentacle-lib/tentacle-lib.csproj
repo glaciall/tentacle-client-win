@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{A4101C94-E024-406C-8889-AD8602183BC8}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>tentacle_lib</RootNamespace>
+    <RootNamespace>cn.org.hentai.tentacle</RootNamespace>
     <AssemblyName>tentacle-lib</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
