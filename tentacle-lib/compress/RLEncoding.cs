@@ -1,4 +1,5 @@
-﻿using System;
+﻿using cn.org.hentai.tentacle.util;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -8,7 +9,7 @@ namespace cn.org.hentai.tentacle.compress
     public class RLEncoding
     {
         // 压缩后的图像字节数组
-        private static MemoryStream compressedData = new MemoryStream(1024 * 1024 * 2);
+        private static ByteWriter compressedData = new ByteWriter(1024 * 1024 * 2);
 
         // 以RGB作为数组下标的数组容器，用于保存颜色的出现次数，或是颜色表的下标
         private static UInt32[] colortable = new UInt32[1 << 24];
@@ -30,7 +31,7 @@ namespace cn.org.hentai.tentacle.compress
         public byte[] compress(UInt32[] bitmap, int from, int to)
         {
             // 初始化
-            compressedData.Position = 0;
+            compressedData.Reset();
 
             // 查找出现次数最多的颜色，建立颜色表
             findMainColors(bitmap, from, to);
