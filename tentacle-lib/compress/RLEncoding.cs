@@ -104,8 +104,7 @@ namespace cn.org.hentai.tentacle.compress
 
             // 清空colortable
             for (int i = 0; i < mainColors.Length; i += 2) colortable[mainColors[i + 1]] = 0;
-
-            return compressedData.GetBuffer();
+            return compressedData.ToArray();
         }
 
         // 查找次数出现最多的颜色

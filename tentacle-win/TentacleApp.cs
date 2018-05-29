@@ -285,13 +285,17 @@ namespace cn.org.hentai.tentacle.app
                         screenshots.RemoveFirst();
                     }
                 }
-                if (screenshot == null || screenshot.isExpired()) return;
+                if (screenshot == null || screenshot.isExpired())
+                {
+                    Thread.Sleep(20);
+                    continue;
+                }
 
                 // 分辨率是否发生了变化？
                 if (lastScreen != null && (lastScreen.width != screenshot.width || lastScreen.height != screenshot.height)) lastScreen = null;
 
                 // 1. 求差
-                UInt32[] bitmap = new UInt32[screenshot.bitmap.Length];
+                UInt32[] bitmap = new UInt32[screenshot.width * screenshot.height];
                 int changedColors = 0, start = -1, end = bitmap.Length;
                 if (lastScreen != null)
                 {
@@ -306,19 +310,26 @@ namespace cn.org.hentai.tentacle.app
                             if (start == -1) start = i;
                             else end = i;
                             changedColors += 1;
-                            bitmap[i] = screenshot.bitmap[i];
+                            lastScreen.bitmap[i] = bitmap[i] = screenshot.bitmap[i];
                         }
                     }
                 }
                 else bitmap = screenshot.bitmap;
 
-                if (lastScreen != null && changedColors == 0) return;
-                // Log.debug("Changed colors: " + changedColors);
+                if (lastScreen != null && changedColors == 0)
+                {
+                    // Thread.Sleep(20);
+                    // Console.WriteLine("no changed colors");
+                    // continue;
+                }
+                Console.WriteLine("Changed colors: " + changedColors);
 
                 // 2. 压缩
-                start = Math.Max(start, 0);
+                // start = Math.Max(start, 0);
+                // start = 0;
                 start = 0;
-                end = bitmap.Length;
+                end = screenshot.width * screenshot.height;
+                // end = bitmap.Length;
                 byte[] compressedData = CompressUtil.process("rle", bitmap, start, end);
 
                 // Log.debug("Compress Ratio: " + (screenshot.bitmap.length * 4.0f / compressedData.length));
@@ -340,7 +351,13 @@ namespace cn.org.hentai.tentacle.app
                 */
                 send(packet);
 
-                lastScreen = screenshot;
+                if (null == lastScreen)
+                {
+                    UInt32[] bmp = new UInt32[screenshot.width * screenshot.height];
+                    Array.Copy(screenshot.bitmap, bmp, bmp.Length);
+                    lastScreen = new Screenshot(bmp, screenshot.width, screenshot.height);
+                }
+                // else lastScreen.bitmap = bitmap;
                 Thread.Sleep(20);
             }
         }
@@ -355,6 +372,9 @@ namespace cn.org.hentai.tentacle.app
         {
             lock(messenger)
             {
+                Console.WriteLine("Send: " + packet.getSize() + " bytes");
+                // ByteUtil.dump(packet.getBytes());
+                // Console.WriteLine("------------------------------------------------------");
                 stream.Write(packet.getBytes(), 0, packet.getSize());
                 stream.Flush();
             }
