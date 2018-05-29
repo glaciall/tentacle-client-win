@@ -76,7 +76,15 @@ namespace cn.org.hentai.tentacle.app
             Thread.CurrentThread.Name = "tentacle-server-converse";
 
             working = false;
-            conn = new TcpClient(Configs.get("server", "localhost"), Configs.getInt("port", 1986));
+            try
+            {
+                conn = new TcpClient(Configs.get("server", "localhost"), Configs.getInt("port", 1986));
+            }
+            catch
+            {
+                Console.WriteLine("cannot connect to server...");
+                return;
+            }
             conn.ReceiveTimeout = 30000;
             conn.SendBufferSize = 30000;
             stream = conn.GetStream();
@@ -85,7 +93,7 @@ namespace cn.org.hentai.tentacle.app
             Console.WriteLine("Connected to server...");
 
             // TODO 1. 身份验证
-            while (true)
+            while (conn.Connected)
             {
                 if (DateTime.Now.Ticks - lastActiveTime > 300000000) break;
                 // 有无下发下来的数据包
@@ -93,7 +101,7 @@ namespace cn.org.hentai.tentacle.app
                 if (packet != null)
                 {
                     lastActiveTime = DateTime.Now.Ticks;
-                    processCommand(packet);
+                    if (processCommand(packet) == false) break;
                 }
                 
                 // TODO: 发送截图
@@ -103,21 +111,21 @@ namespace cn.org.hentai.tentacle.app
                 {
                     Packet p = Packet.create(Command.HEARTBEAT, 5);
                     p.addBytes(Encoding.ASCII.GetBytes("HELLO"));
-                    send(p);
+                    if (send(p) == false) break;
                     lastActiveTime = DateTime.Now.Ticks;
                 }
                 Thread.Sleep(5);
             }
+
+            working = false;
         }
 
-        private void processCommand(Packet packet)
+        private bool processCommand(Packet packet)
         {
             packet.skip(6);
             int cmd = packet.nextByte();
             int length = packet.nextInt();
             Packet resp = null;
-
-            Console.WriteLine("Recv Cmd: " + cmd);
 
             // 心跳
             if (cmd == Command.HEARTBEAT)
@@ -145,9 +153,6 @@ namespace cn.org.hentai.tentacle.app
                         .addShort((short)screenWidth)                   // 屏幕宽度
                         .addShort((short)screenHeight)                  // 屏幕高度
                         .addLong(DateTime.Now.Ticks / 1000000);         // 当前系统时间戳
-                // (captureWorker = new CaptureWorker()).start();
-                // (compressWorker = new CompressWorker()).start();
-                // (hidCommandExecutor = new HIDCommandExecutor()).start();
 
                 new Thread(captureScreen).Start();
                 new Thread(compress).Start();
@@ -214,7 +219,7 @@ namespace cn.org.hentai.tentacle.app
                 catch(Exception e)
                 {
                     Console.WriteLine(e.Message);
-                    return;
+                    return true;
                 }
                 using (MemoryStream baos = new MemoryStream(40960))
                 {
@@ -249,13 +254,18 @@ namespace cn.org.hentai.tentacle.app
             // 发送响应至服务器端
             if (resp != null)
             {
-                send(resp);
+                return send(resp);
             }
+            return true;
         }
 
         // 截屏工作线程
         private void captureScreen()
         {
+            lock(screenshots)
+            {
+                screenshots.Clear();
+            }
             while (working)
             {
                 Screenshot screenshot = DisplayContext.CaptureScreen();
@@ -272,6 +282,11 @@ namespace cn.org.hentai.tentacle.app
         {
             int sequence = 0;
             Screenshot lastScreen = null;
+
+            lock(screenshots)
+            {
+                screenshots.Clear();
+            }
 
             while (working)
             {
@@ -368,15 +383,22 @@ namespace cn.org.hentai.tentacle.app
         // HID指令执行线程
 
 
-        public void send(Packet packet)
+        public bool send(Packet packet)
         {
-            lock(messenger)
+            try
             {
-                Console.WriteLine("Send: " + packet.getSize() + " bytes");
-                // ByteUtil.dump(packet.getBytes());
-                // Console.WriteLine("------------------------------------------------------");
-                stream.Write(packet.getBytes(), 0, packet.getSize());
-                stream.Flush();
+                lock (messenger)
+                {
+                    stream.Write(packet.getBytes(), 0, packet.getSize());
+                    stream.Flush();
+                }
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Send: " + ex.Message);
+                return false;
             }
         }
     }
