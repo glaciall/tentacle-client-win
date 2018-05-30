@@ -35,6 +35,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="app\CaptureWorker.cs" />
+    <Compile Include="app\HIDCommandExecutor.cs" />
+    <Compile Include="app\Worker.cs" />
     <Compile Include="Tentacle.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -87,9 +90,7 @@
       <Name>tentacle-lib</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="app\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="res\tentacle.ico" />
   </ItemGroup>

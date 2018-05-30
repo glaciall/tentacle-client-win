@@ -35,7 +35,31 @@ namespace cn.org.hentai.tentacle.win
 
         private void Tentacle_Load(object sender, EventArgs e)
         {
-            new TentacleApp().start();
+            // new TentacleApp().start();
+            new XXWorker().start();
+        }
+    }
+
+    class XXWorker : Worker
+    {
+        public override void before()
+        {
+            Console.WriteLine("some works before...");
+        }
+
+        public override void after()
+        {
+            Console.WriteLine("do something after...");
+        }
+
+        public override int loops()
+        {
+            return -1;
+        }
+
+        public override void run()
+        {
+            Console.WriteLine("吭哧吭哧。。。");
         }
     }
 }
