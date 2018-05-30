@@ -9,7 +9,7 @@ namespace cn.org.hentai.tentacle.compress
     public class RLEncoding
     {
         // 压缩后的图像字节数组
-        private static ByteWriter compressedData = new ByteWriter(1024 * 1024 * 2);
+        private static ByteWriter compressedData = new ByteWriter(1024 * 1024 * 20);
 
         // 以RGB作为数组下标的数组容器，用于保存颜色的出现次数，或是颜色表的下标
         private static UInt32[] colortable = new UInt32[1 << 24];
