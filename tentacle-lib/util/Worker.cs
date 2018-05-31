@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
-namespace cn.org.hentai.tentacle.app
+namespace cn.org.hentai.tentacle.util
 {
     public abstract class Worker
     {

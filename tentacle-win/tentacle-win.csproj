@@ -37,7 +37,6 @@
   <ItemGroup>
     <Compile Include="app\CaptureWorker.cs" />
     <Compile Include="app\HIDCommandExecutor.cs" />
-    <Compile Include="app\Worker.cs" />
     <Compile Include="Tentacle.cs">
       <SubType>Form</SubType>
     </Compile>
