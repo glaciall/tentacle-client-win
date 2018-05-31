@@ -66,6 +66,7 @@
     <Compile Include="util\ByteWriter.cs" />
     <Compile Include="util\ByteUtil.cs" />
     <Compile Include="util\Configs.cs" />
+    <Compile Include="util\SocketClient.cs" />
     <Compile Include="util\TimeUtil.cs" />
     <Compile Include="util\Worker.cs" />
   </ItemGroup>

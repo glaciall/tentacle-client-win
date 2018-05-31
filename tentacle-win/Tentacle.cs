@@ -13,6 +13,8 @@ using System.Drawing.Imaging;
 using System.Net.Sockets;
 using System.IO;
 using cn.org.hentai.tentacle.app;
+using cn.org.hentai.tentacle.util;
+using System.Net;
 
 namespace cn.org.hentai.tentacle.win
 {
@@ -36,30 +38,36 @@ namespace cn.org.hentai.tentacle.win
         private void Tentacle_Load(object sender, EventArgs e)
         {
             // new TentacleApp().start();
-            new XXWorker().start();
+            // new XXWorker().start();
+            client = new SocketClient();
+            client.connect("192.168.1.10", 1234, xxoo);
+        }
+
+        SocketClient client = null;
+
+        public void xxoo(byte[] data)
+        {
+            string recv = Encoding.ASCII.GetString(data);
+            Console.WriteLine("Recv: " + recv);
+            if (recv.IndexOf("exit") > -1)
+            {
+                client.close();
+                return;
+            }
+            client.send(Encoding.ASCII.GetBytes("FUCK: " + recv.ToUpper()));
         }
     }
 
     class XXWorker : Worker
     {
-        public override void before()
+        public override void run()
         {
-            Console.WriteLine("some works before...");
+            
         }
 
         public override void after()
         {
-            Console.WriteLine("do something after...");
-        }
-
-        public override int loops()
-        {
-            return -1;
-        }
-
-        public override void run()
-        {
-            Console.WriteLine("吭哧吭哧。。。");
+            Console.WriteLine("这就完事了？");
         }
     }
 }

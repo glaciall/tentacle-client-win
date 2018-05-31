@@ -53,7 +53,8 @@ namespace cn.org.hentai.tentacle.util
             }
             catch (Exception e)
             {
-                Console.WriteLine("Thread: " + e.Message);
+                Console.Error.WriteLine("Thread: " + e.Message);
+                Console.Error.WriteLine(e.StackTrace);
             }
             after();
         }
