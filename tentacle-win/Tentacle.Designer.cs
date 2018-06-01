@@ -51,6 +51,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Tentacle";
             this.Text = "Tentacle";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Tentacle_FormClosing);
             this.Load += new System.EventHandler(this.Tentacle_Load);
             this.ResumeLayout(false);
 

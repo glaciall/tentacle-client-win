@@ -37,37 +37,12 @@ namespace cn.org.hentai.tentacle.win
 
         private void Tentacle_Load(object sender, EventArgs e)
         {
-            // new TentacleApp().start();
-            // new XXWorker().start();
-            client = new SocketClient();
-            client.connect("192.168.1.10", 1234, xxoo);
+
         }
 
-        SocketClient client = null;
-
-        public void xxoo(byte[] data)
+        private void Tentacle_FormClosing(object sender, FormClosingEventArgs e)
         {
-            string recv = Encoding.ASCII.GetString(data);
-            Console.WriteLine("Recv: " + recv);
-            if (recv.IndexOf("exit") > -1)
-            {
-                client.close();
-                return;
-            }
-            client.send(Encoding.ASCII.GetBytes("FUCK: " + recv.ToUpper()));
-        }
-    }
 
-    class XXWorker : Worker
-    {
-        public override void run()
-        {
-            
-        }
-
-        public override void after()
-        {
-            Console.WriteLine("这就完事了？");
         }
     }
 }

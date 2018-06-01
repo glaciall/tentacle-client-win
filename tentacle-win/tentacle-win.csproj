@@ -35,8 +35,12 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="app\CaptureWorker.cs" />
-    <Compile Include="app\HIDCommandExecutor.cs" />
+    <Compile Include="app\worker\CaptureWorker.cs" />
+    <Compile Include="app\worker\CompressWorker.cs" />
+    <Compile Include="app\worker\FileTransferWorker.cs" />
+    <Compile Include="app\worker\HeartbeatSender.cs" />
+    <Compile Include="app\worker\HIDCommandExecutor.cs" />
+    <Compile Include="app\TentacleDaemon.cs" />
     <Compile Include="Tentacle.cs">
       <SubType>Form</SubType>
     </Compile>

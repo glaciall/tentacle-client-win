@@ -10,14 +10,26 @@ namespace cn.org.hentai.tentacle.protocol
 {
     public class Packet
     {
+        // 头部往后的数据体长度
         int size = 0;
+        // 当前读写指针索引位置
         int offset = 0;
+        // 包数据体最大大小
         int maxSize = 0;
+        // 头部+数据体
         public byte[] data;
 
         private Packet()
         {
             // do nothing here..
+        }
+
+        public static Packet from(byte[] data)
+        {
+            Packet packet = new Packet();
+            packet.data = data;
+            packet.size = data.Length - 11;
+            return packet;
         }
 
         public static Packet read(Stream stream, int bytesInBuffer)

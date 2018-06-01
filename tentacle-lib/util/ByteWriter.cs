@@ -11,7 +11,7 @@ namespace cn.org.hentai.tentacle.util
     /// </summary>
     public class ByteWriter : Stream
     {
-        private byte[] buffer;                      // 数据存储区
+        public byte[] buffer;                       // 数据存储区
         private long offset = 0;                    // 数据写入的当前位置指针
         private long size = 0;                      // 实际写入大小
 
@@ -51,10 +51,18 @@ namespace cn.org.hentai.tentacle.util
             throw new NotImplementedException();
         }
 
-        public override void Write(byte[] buffer, int offset, int count)
+        public override void Close()
         {
-            for (int i = 0; i < count; i++) this.buffer[offset++] = buffer[i + offset];
+            this.buffer = null;
+        }
+
+        public override void Write(byte[] block, int offset, int count)
+        {
+            Array.Copy(block, offset, this.buffer, this.offset, count);
+            this.offset += count;
             this.size += count;
+            // for (int i = 0; i < count; i++) this.buffer[offset++] = block[i + offset];
+            // this.size += count;
         }
 
         public override void WriteByte(byte value)
@@ -74,6 +82,23 @@ namespace cn.org.hentai.tentacle.util
             byte[] data = new byte[this.size];
             Array.Copy(this.buffer, data, size);
             return data;
+        }
+
+        /// <summary>
+        /// 从头部剪切下多少个字节的内容
+        /// </summary>
+        /// <param name="byteCount">字节数量</param>
+        /// <returns>字节数组</returns>
+        public byte[] Cut(int byteCount)
+        {
+            byte[] head = new byte[byteCount];
+            // 将头部的byteCount个字节复制到新数组里
+            Array.Copy(this.buffer, head, byteCount);
+            // 将头部byteCount个字节往后的内容往前挪byteCount个位
+            Array.Copy(this.buffer, byteCount, this.buffer, 0, this.size - byteCount);
+            this.offset -= byteCount;
+            this.size -= byteCount;
+            return head;
         }
     }
 }

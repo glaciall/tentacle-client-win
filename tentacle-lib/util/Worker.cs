@@ -59,9 +59,10 @@ namespace cn.org.hentai.tentacle.util
             after();
         }
 
-        public void start()
+        public Worker start()
         {
             (this.thread = new Thread(this.work)).Start();
+            return this;
         }
     }
 }
