@@ -27,17 +27,12 @@ namespace cn.org.hentai.tentacle.win
 
         private void button1_Click(object sender, EventArgs e)
         {
-            new Thread(test).Start();
-        }
-
-        private void test()
-        {
-
+            // ...
         }
 
         private void Tentacle_Load(object sender, EventArgs e)
         {
-
+            new TentacleDaemon().start();
         }
 
         private void Tentacle_FormClosing(object sender, FormClosingEventArgs e)

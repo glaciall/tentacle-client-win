@@ -21,19 +21,29 @@ namespace cn.org.hentai.tentacle.util
             for (int i = 0, l = data.Length; i < l; )
             {
                 string ascii = "";
-                int k = 0;
-                for (; k + i < l && k < 16; k++)
+                int k = 0, f = 0;
+                for (; k < 16; k++)
                 {
-                    byte d = data[i + k];
-                    string hex = Convert.ToString(d, 16).ToUpper();
-                    if (hex.Length == 1) hex = "0" + hex;
-                    if (d >= 0x20 && d < 127) ascii += (char)d;
-                    else ascii += '.';
-                    Console.Write(hex);
+                    if (k + i < l)
+                    {
+                        f++;
+                        byte d = data[i + k];
+                        string hex = Convert.ToString(d, 16).ToUpper();
+                        if (hex.Length == 1) hex = "0" + hex;
+                        if (d >= 0x20 && d < 127) ascii += (char)d;
+                        else ascii += '.';
+                        Console.Write(hex);
+                    }
+                    else
+                    {
+                        Console.Write(' ');
+                        Console.Write(' ');
+                    }
+
                     if (k % 4 == 3) Console.Write("   ");
                     else Console.Write(' ');
                 }
-                i += k;
+                i += f;
                 Console.WriteLine(ascii);
             }
         }

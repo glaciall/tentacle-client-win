@@ -1,23 +1,26 @@
-﻿using cn.org.hentai.tentacle.util;
+﻿using cn.org.hentai.tentacle.display;
+using cn.org.hentai.tentacle.graphic;
+using cn.org.hentai.tentacle.util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace cn.org.hentai.tentacle.app
 {
     public class CaptureWorker : Worker
     {
-        public CaptureWorker()
+        private CompressWorker compressWorker = null;
+        public CaptureWorker(CompressWorker compressWorker)
         {
-            // ...
+            this.compressWorker = compressWorker;
         }
 
         public override void run()
         {
-            // 截一张屏
-            // 放到队列里去
-            // 要不要通知其它工作线程
+            Screenshot screenshot = DisplayContext.CaptureScreen();
+            compressWorker.addScreenshot(screenshot);
         }
 
         public override int loops()

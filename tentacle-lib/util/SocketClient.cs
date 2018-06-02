@@ -55,12 +55,11 @@ namespace cn.org.hentai.tentacle.util
             this.bufferHandler = bufferHandler;
 
             this.buff = new byte[receiveBufferSize];
-            this.socket.BeginReceive(this.buff, 0, this.buff.Length, 0, new AsyncCallback(onReceive), this.socket);
+            tryReceive();
         }
 
         private void connectCallback(IAsyncResult ar)
         {
-            // do nothing here...
             TcpClient conn = (TcpClient)ar.AsyncState;
             Console.WriteLine("xx: " + conn.Connected);
             conn.EndConnect(ar);
@@ -75,7 +74,20 @@ namespace cn.org.hentai.tentacle.util
             this.bufferHandler(data);
             if (socket != null && socket.Connected)
             {
+                tryReceive();
+            }
+        }
+
+        private void tryReceive()
+        {
+            try
+            {
                 socket.BeginReceive(buff, 0, buff.Length, 0, new AsyncCallback(onReceive), socket);
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine("Socket: " + e.Message);
+                Console.Error.WriteLine(e.StackTrace);
             }
         }
 

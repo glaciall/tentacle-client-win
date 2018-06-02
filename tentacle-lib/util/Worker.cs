@@ -13,6 +13,11 @@ namespace cn.org.hentai.tentacle.util
         private Thread thread;
         public bool terminated { get; set; }
 
+        public virtual string name()
+        {
+            return null;
+        }
+
         public virtual void before()
         {
             // 事前准备
@@ -37,6 +42,8 @@ namespace cn.org.hentai.tentacle.util
 
         private void work()
         {
+            if (name() != null) Thread.CurrentThread.Name = name();
+            else Thread.CurrentThread.Name = "worker-" + this.GetType().Name;
             before();
             try
             {

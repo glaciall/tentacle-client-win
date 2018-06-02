@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace cn.org.hentai.tentacle.app
@@ -69,9 +70,9 @@ namespace cn.org.hentai.tentacle.app
             client.connect(Configs.get("server", "localhost"), Configs.getInt("port", 1986), new SocketClient.BufferHandler(bufferHandler));
 
             (heartbeatSender = new HeartbeatSender(client)).start();
-            (compressWorker = new CompressWorker()).start();
-            (captureWorker = new CaptureWorker()).start();
+
             // TODO: 其它工作线程的启动
+            while (true) Thread.Sleep(10000);
         }
 
         private void bufferHandler(byte[] block)
@@ -82,6 +83,10 @@ namespace cn.org.hentai.tentacle.app
             if (byteBuffer.Length < packetLength) return;
 
             Packet packet = Packet.from(byteBuffer.Cut(packetLength));
+
+            Console.WriteLine("Receive: ");
+            ByteUtil.dump(packet.getBytes());
+
             packet.seek(6);
             int cmd = packet.nextByte() & 0xff;
             int dataLength = packet.nextInt() & 0x7fffffff;
@@ -92,6 +97,8 @@ namespace cn.org.hentai.tentacle.app
             if (resp != null) client.send(resp.getBytes());
         }
 
+        // /////////////////////////////////////////////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////////////////////////////////////////////////
         // 开始远程控制
         public Packet requestControl(Packet packet)
         {
@@ -112,7 +119,9 @@ namespace cn.org.hentai.tentacle.app
                     .addLong(DateTime.Now.Ticks / 1000000);         // 当前系统时间戳
 
             // TODO: 在这里启动工作线程
-            
+            (compressWorker = new CompressWorker(this.client)).start();
+            (captureWorker = new CaptureWorker(compressWorker)).start();
+
             return resp;
         }
 
@@ -121,7 +130,7 @@ namespace cn.org.hentai.tentacle.app
         {
             if (captureWorker != null) captureWorker.terminated = true;
             if (compressWorker != null) compressWorker.terminated = true;
-            if (heartbeatSender != null) heartbeatSender.terminated = true;
+            // if (heartbeatSender != null) heartbeatSender.terminated = true;
             return Packet.create(Command.CLOSE_RESPONSE, 4).addBytes(Encoding.ASCII.GetBytes("OJBK"));
         }
 

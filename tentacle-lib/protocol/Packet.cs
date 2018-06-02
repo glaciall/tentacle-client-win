@@ -10,13 +10,13 @@ namespace cn.org.hentai.tentacle.protocol
 {
     public class Packet
     {
-        // 头部往后的数据体长度
+        // 实际数据长度（头部+数据体）
         int size = 0;
         // 当前读写指针索引位置
         int offset = 0;
         // 包数据体最大大小
         int maxSize = 0;
-        // 头部+数据体
+        // 头部+数据体+可能冗余的空间
         public byte[] data;
 
         private Packet()
@@ -28,7 +28,7 @@ namespace cn.org.hentai.tentacle.protocol
         {
             Packet packet = new Packet();
             packet.data = data;
-            packet.size = data.Length - 11;
+            packet.size = data.Length;
             return packet;
         }
 
