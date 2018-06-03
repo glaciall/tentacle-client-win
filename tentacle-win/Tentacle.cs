@@ -32,7 +32,7 @@ namespace cn.org.hentai.tentacle.win
 
         private void Tentacle_Load(object sender, EventArgs e)
         {
-            new TentacleDaemon().start();
+            new TentacleApp().start();
         }
 
         private void Tentacle_FormClosing(object sender, FormClosingEventArgs e)

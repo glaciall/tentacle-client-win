@@ -40,7 +40,7 @@
     <Compile Include="app\worker\FileTransferWorker.cs" />
     <Compile Include="app\worker\HeartbeatSender.cs" />
     <Compile Include="app\worker\HIDCommandExecutor.cs" />
-    <Compile Include="app\TentacleDaemon.cs" />
+    <Compile Include="app\TentacleApp.cs" />
     <Compile Include="Tentacle.cs">
       <SubType>Form</SubType>
     </Compile>

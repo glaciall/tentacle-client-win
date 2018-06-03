@@ -14,7 +14,7 @@ using System.Windows.Forms;
 
 namespace cn.org.hentai.tentacle.app
 {
-    public class TentacleDaemon : Worker
+    public class TentacleApp : Worker
     {
         // 是否处理远程控制状态中
         bool working = false;
@@ -186,6 +186,7 @@ namespace cn.org.hentai.tentacle.app
         // 列出文件列表
         public Packet listFiles(Packet packet)
         {
+            Console.WriteLine("list files.....");
             int len = packet.nextInt();
             String path = Encoding.UTF8.GetString(packet.nextBytes(len));
             cn.org.hentai.tentacle.system.File[] files = null;
