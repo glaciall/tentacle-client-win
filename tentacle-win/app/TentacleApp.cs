@@ -24,6 +24,7 @@ namespace cn.org.hentai.tentacle.app
         private HeartbeatSender heartbeatSender = null;                 // 心跳发送线程
         private CaptureWorker captureWorker = null;                     // 屏幕截屏线程
         private CompressWorker compressWorker = null;                   // 画面压缩线程
+        private HIDCommandExecutor hidExecutor = null;                  // 键鼠指令执行线程
 
         // 指令包处理器委托声明
         private delegate Packet CommandHandler(Packet packet);
@@ -60,6 +61,7 @@ namespace cn.org.hentai.tentacle.app
             if (heartbeatSender != null) heartbeatSender.terminated = true;
             if (captureWorker != null) captureWorker.terminated = true;
             if (compressWorker != null) compressWorker.terminated = true;
+            if (hidExecutor != null) hidExecutor.terminated = true;
 
             byteBuffer.Close();
         }
@@ -121,6 +123,7 @@ namespace cn.org.hentai.tentacle.app
             // TODO: 在这里启动工作线程
             (compressWorker = new CompressWorker(this.client)).start();
             (captureWorker = new CaptureWorker(compressWorker)).start();
+            (hidExecutor = new HIDCommandExecutor()).start();
 
             return resp;
         }
@@ -174,12 +177,7 @@ namespace cn.org.hentai.tentacle.app
             if (hidType == HIDCommand.TYPE_MOUSE)
             {
                 hidCommand = new MouseCommand(eventType, key, x, y, timestamp);
-                if (eventType == MouseCommand.MOUSE_MOVE) MouseCtrl.mouseMove(x, y);
-                else if (eventType == MouseCommand.MOUSE_DOWN) MouseCtrl.mouseDown(x, y, key);
-                else if (eventType == MouseCommand.MOUSE_UP) MouseCtrl.mouseUp(x, y, key);
-                else if (eventType == MouseCommand.MOUSE_WHEEL) MouseCtrl.mouseScroll(x, y, key);
-
-                Console.WriteLine("MouseEvent: " + eventType);
+                hidExecutor.add(hidCommand);
             }
             else
             {

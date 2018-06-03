@@ -20,6 +20,8 @@ namespace cn.org.hentai.tentacle.win
 {
     public partial class Tentacle : Form
     {
+        TentacleApp app = null;
+
         public Tentacle()
         {
             InitializeComponent();
@@ -32,12 +34,12 @@ namespace cn.org.hentai.tentacle.win
 
         private void Tentacle_Load(object sender, EventArgs e)
         {
-            new TentacleApp().start();
+            (app = new TentacleApp()).start();
         }
 
         private void Tentacle_FormClosing(object sender, FormClosingEventArgs e)
         {
-
+            // app.terminate();
         }
     }
 }
