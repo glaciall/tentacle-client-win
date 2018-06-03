@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.27703.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tentacle-service", "tentacle-service\tentacle-service.csproj", "{FA62D911-3D26-4AC7-BACE-DBA9E51A11CD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A4101C94-E024-406C-8889-AD8602183BC8} = {A4101C94-E024-406C-8889-AD8602183BC8}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tentacle-win", "tentacle-win\tentacle-win.csproj", "{068AB139-65F3-468B-B7B8-5AAFDFA363E1}"
 EndProject

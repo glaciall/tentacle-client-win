@@ -174,12 +174,17 @@ namespace cn.org.hentai.tentacle.app
             if (hidType == HIDCommand.TYPE_MOUSE)
             {
                 hidCommand = new MouseCommand(eventType, key, x, y, timestamp);
+                if (eventType == MouseCommand.MOUSE_MOVE) MouseCtrl.mouseMove(x, y);
+                else if (eventType == MouseCommand.MOUSE_DOWN) MouseCtrl.mouseDown(x, y, key);
+                else if (eventType == MouseCommand.MOUSE_UP) MouseCtrl.mouseUp(x, y, key);
+                else if (eventType == MouseCommand.MOUSE_WHEEL) MouseCtrl.mouseScroll(x, y, key);
+
+                Console.WriteLine("MouseEvent: " + eventType);
             }
             else
             {
                 hidCommand = new KeyboardCommand(key, eventType, timestamp);
             }
-            // TODO: HID指令执行队列
             return null;
         }
 
