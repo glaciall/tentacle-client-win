@@ -86,8 +86,8 @@ namespace cn.org.hentai.tentacle.app
 
             Packet packet = Packet.from(byteBuffer.Cut(packetLength));
 
-            Console.WriteLine("Receive: ");
-            ByteUtil.dump(packet.getBytes());
+            // Console.WriteLine("Receive: ");
+            // ByteUtil.dump(packet.getBytes());
 
             packet.seek(6);
             int cmd = packet.nextByte() & 0xff;

@@ -37,8 +37,8 @@ namespace cn.org.hentai.tentacle.app
             if (hidCommand is MouseCommand)
             {
                 MouseCommand cmd = (MouseCommand)hidCommand;
-                if (cmd.eventType == MouseCommand.MOUSE_MOVE) MouseCtrl.mouseMove(cmd.x, cmd.y);
-                else if (cmd.eventType == MouseCommand.MOUSE_DOWN) MouseCtrl.mouseDown(cmd.x, cmd.y, cmd.key);
+                // if (cmd.eventType == MouseCommand.MOUSE_MOVE) MouseCtrl.mouseMove(cmd.x, cmd.y);
+                if (cmd.eventType == MouseCommand.MOUSE_DOWN) MouseCtrl.mouseDown(cmd.x, cmd.y, cmd.key);
                 else if (cmd.eventType == MouseCommand.MOUSE_UP) MouseCtrl.mouseUp(cmd.x, cmd.y, cmd.key);
                 else if (cmd.eventType == MouseCommand.MOUSE_WHEEL) MouseCtrl.mouseScroll(cmd.x, cmd.y, cmd.key);
             }

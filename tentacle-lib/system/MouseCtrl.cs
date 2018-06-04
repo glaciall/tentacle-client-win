@@ -50,7 +50,6 @@ namespace cn.org.hentai.tentacle.system
         public static void mouseMove(int x, int y)
         {
             var p = convert(x, y);
-            // Console.WriteLine("Mouse To: {0}, {1}", x, y);
             mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, p.x, p.y, 0, 0);
         }
 
@@ -59,6 +58,7 @@ namespace cn.org.hentai.tentacle.system
             var p = convert(x, y);
             int btn = MOUSEEVENTF_LEFTUP;
             if (key == BUTTON_RIGHT) btn = MOUSEEVENTF_RIGHTUP;
+            mouseMove(x, y);
             mouse_event(btn | MOUSEEVENTF_ABSOLUTE, p.x, p.y, 0, 0);
         }
 
@@ -67,6 +67,7 @@ namespace cn.org.hentai.tentacle.system
             var p = convert(x, y);
             int btn = MOUSEEVENTF_LEFTDOWN;
             if (key == BUTTON_RIGHT) btn = MOUSEEVENTF_RIGHTDOWN;
+            mouseMove(x, y);
             mouse_event(btn | MOUSEEVENTF_ABSOLUTE, p.x, p.y, 0, 0);
         }
 

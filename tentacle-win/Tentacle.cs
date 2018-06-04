@@ -15,6 +15,7 @@ using System.IO;
 using cn.org.hentai.tentacle.app;
 using cn.org.hentai.tentacle.util;
 using System.Net;
+using cn.org.hentai.tentacle.system;
 
 namespace cn.org.hentai.tentacle.win
 {
